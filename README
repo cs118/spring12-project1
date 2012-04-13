@@ -1,0 +1,4 @@
+To learn more about ./waf, refer to http://code.google.com/p/waf/
+and http://waf.googlecode.com/svn/docs/wafbook/single.html
+
+Ideally, you will need only to add your source files in wscript, which is basically a Python program.
