@@ -10,7 +10,6 @@
 
 #include <string>
 #include <list>
-#include <boost/exception/all.hpp>
 
 struct HttpHeader
 {
@@ -30,8 +29,16 @@ struct HttpHeader
 /**
  * Exception that will be thrown when parsing cannot be performed
  */
-class ParseException : public boost::exception, public std::exception { };
-class MethodNotSupported : public boost::exception, public std::exception { };
+class ParseException : public std::exception
+{
+public:
+  ParseException (std::string reason) : m_reason (reason) { }
+  virtual ~ParseException () throw () { }
+  virtual const char* what() const throw ()
+  { return m_reason.c_str (); }
+private:
+  std::string m_reason;
+};
 
 /**
  * @brief Class to parse/create HTTP requests

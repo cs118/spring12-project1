@@ -21,10 +21,7 @@ using namespace std;
 #else
 #endif // _DEBUG
 
-#include <boost/throw_exception.hpp>
 #include <boost/lexical_cast.hpp>
-
-typedef boost::error_info<struct tag_errmsg, string> ErrInfo;
 
 HttpRequest::HttpRequest ()
   : m_method (UNSUPPORTED)
@@ -42,7 +39,7 @@ size_t
 HttpRequest::GetTotalLength () const
 {
   if (m_method != GET)
-    throw ParseException () << ErrInfo ("Only GET method is supported");
+    throw ParseException ("Only GET method is supported");
       
   size_t len = 4; // 'GET '
   len += m_path.size () + 1; // '<path> '
@@ -70,7 +67,7 @@ void
 HttpRequest::FormatRequest (char *buffer) const
 {
   if (m_method != GET)
-    throw ParseException () << ErrInfo ("Only GET method is supported");
+    throw ParseException ("Only GET method is supported");
 
   char *bufLastPos = buffer;
   
