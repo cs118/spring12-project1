@@ -31,6 +31,7 @@ struct HttpHeader
  * Exception that will be thrown when parsing cannot be performed
  */
 class ParseException : public boost::exception, public std::exception { };
+class MethodNotSupported : public boost::exception, public std::exception { };
 
 /**
  * @brief Class to parse/create HTTP requests
@@ -40,6 +41,24 @@ class ParseException : public boost::exception, public std::exception { };
  *  of headers. Request line fields such as method, protocol etc. are stored
  *  explicitly. Headers such as 'Content-Length' and their values are maintained
  *  in a linked list.
+ *
+ * Example:
+ *      // command line parsing
+ *      HttpRequest req;
+ *      req.SetHost ("www.google.com");
+ *      req.SetPort (80);
+ *      req.SetMethod (HttpRequest::GET);
+ *      req.SetPath ("/");
+ *      req.SetVersion ("1.0");
+ *      req.AddHeader ("Accept-Language", "en-US");
+ *    
+ *      size_t reqLen = req.GetTotalLength ();
+ *      char *buf = new char [reqLen];
+ *    
+ *      req.FormatRequest (buf);
+ *      cout << buf;
+ *      
+ *      delete [] buf;
  */
 class HttpRequest
 {
@@ -76,7 +95,7 @@ public:
   /**
    * @brief Get total length of the HTTP header (buffer size necessary to hold formatted HTTP request)
    */
-  void
+  size_t
   GetTotalLength () const;
 
   /**
@@ -84,12 +103,13 @@ public:
    *
    * Note that formatted request will have \0 at the end, which should not be sent over TCP
    *
+   * Another note. Buffer size should be enough to hold the request (e.g., obtained from GetTotalLength () call). Otherwise, anything can happen.
+   *
    * @param buffer [out] Buffer that will hold formatted request
-   * @param bufferSize [in] Available size in the buffer
    * @returns Number of bytes actually written to the buffer
    */
-  size_t
-  FormatRequest (char *buffer, size_t bufferSize) const;
+  void
+  FormatRequest (char *buffer) const;
   
   // Getters/Setters for HTTP request fields
 
@@ -105,17 +125,17 @@ public:
   void
   SetMethod (MethodEnum method);
 
-  /**
-   * @brief Set method of the HTTP request
-   */
-  const std::string &
-  GetProtocol () const;
+  // /**
+  //  * @brief Set method of the HTTP request
+  //  */
+  // const std::string &
+  // GetProtocol () const;
 
-  /**
-   * @brief Set method of the HTTP request
-   */
-  void
-  SetProtocol (const std::string &protocol);
+  // /**
+  //  * @brief Set method of the HTTP request
+  //  */
+  // void
+  // SetProtocol (const std::string &protocol);
 
   /**
    * @brief Get host of the HTTP request
@@ -182,10 +202,17 @@ public:
    */
   void
   RemoveHeader (const std::string &key);
+
+  /**
+   * @brief Modify HTTP header
+   *
+   * Note that if header is currently not present, it will be added
+   */
+  void
+  ModifyHeader (const std::string &key, const std::string &value);
   
 private:
   MethodEnum  m_method;
-  std::string m_protocol;
   std::string m_host;
   uint16_t    m_port;
   std::string m_path;
