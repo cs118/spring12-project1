@@ -22,7 +22,6 @@ using namespace std;
 #endif // _DEBUG
 
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 
 HttpRequest::HttpRequest ()
@@ -46,14 +45,6 @@ HttpRequest::ParseRequest (const char *buffer, size_t size)
   string requestLine (curPos, endline-curPos);
   boost::tokenizer< boost::char_separator<char> > tokens (requestLine,
                                                           boost::char_separator<char> (" "));
-
-// #ifdef _DEBUG
-//   BOOST_FOREACH (string t, tokens)
-//   {
-//     cout << "Token: " << t << "\n";
-//   }
-//   cout << endl;
-// #endif
   
   // 1. Request type
   boost::tokenizer< boost::char_separator<char> >::iterator token = tokens.begin ();
