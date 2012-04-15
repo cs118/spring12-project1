@@ -8,7 +8,7 @@ def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
     env.env.append_value('CXXFLAGS', ['-O0', '-g3'])
-    env.check_boost(lib='regex thread')
+    env.check_boost()
 
 def build (env):
     env.load ('compiler_c compiler_cxx')
@@ -17,7 +17,7 @@ def build (env):
     server = env.program (
         target = "http-proxy",
         features = ["cxx", "cxxprogram"],
-        use = 'BOOST BOOST_REGEX BOOST_THREAD',
+        use = 'BOOST',
         source = [
             # Put additional files here
             # ...
@@ -32,7 +32,7 @@ def build (env):
     client = env.program (
         target = "http-get",
         features = ["cxx", "cxxprogram"],
-        use = 'BOOST BOOST_REGEX BOOST_THREAD',
+        use = 'BOOST',
         source = [
             # Put additional files here
             # ...
