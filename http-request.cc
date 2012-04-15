@@ -36,7 +36,7 @@ HttpRequest::ParseRequest (const char *buffer, size_t size)
 {
   const char *curPos = buffer;
   
-  const char *endline = strnstr (curPos, "\r\n", size - (curPos-buffer));
+  const char *endline = (const char *)memmem (curPos, size - (curPos-buffer), "\r\n", 2);
   if (endline == 0)
     {
       throw ParseException ("HTTP Request doesn't end with \\r\\n");
