@@ -73,7 +73,7 @@ HttpHeaders::ParseHeaders (const char *buffer, size_t size)
       
           // TRACE ("Key: [" << key << "], value: [" << value << "]");
 
-          AddHeader (key, value);
+          ModifyHeader (key, value);
         }
       
       curPos = endline + 2;

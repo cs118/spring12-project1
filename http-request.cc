@@ -22,6 +22,8 @@ using namespace std;
 #endif // _DEBUG
 
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
 
 HttpRequest::HttpRequest ()
   : m_method (UNSUPPORTED)
@@ -32,6 +34,107 @@ HttpRequest::HttpRequest ()
 const char*
 HttpRequest::ParseRequest (const char *buffer, size_t size)
 {
+  const char *curPos = buffer;
+  
+  const char *endline = strnstr (curPos, "\r\n", size - (curPos-buffer));
+  if (endline == 0)
+    {
+      throw ParseException ("HTTP Request doesn't end with \\r\\n");
+    }
+
+  boost::char_separator<char> sep(" ");
+  string requestLine (curPos, endline-curPos);
+  boost::tokenizer< boost::char_separator<char> > tokens (requestLine,
+                                                          boost::char_separator<char> (" "));
+
+// #ifdef _DEBUG
+//   BOOST_FOREACH (string t, tokens)
+//   {
+//     cout << "Token: " << t << "\n";
+//   }
+//   cout << endl;
+// #endif
+  
+  // 1. Request type
+  boost::tokenizer< boost::char_separator<char> >::iterator token = tokens.begin ();
+  if (token == tokens.end ())
+    throw ParseException ("Incorrectly formatted request");
+
+  // TRACE ("Token1: " << *token);
+  if (*token != "GET")
+    {
+      throw ParseException ("Request is not GET");
+    }
+  SetMethod (GET);
+
+  // 2. Request path
+  ++ token;
+  if (token == tokens.end ())
+    throw ParseException ("Incorrectly formatted request");
+
+  // TRACE ("Token2: " << *token);
+  size_t pos = token->find ("://");
+  if (pos == string::npos)
+    {
+      // just path
+      SetPath (*token);
+    }
+  else
+    {
+      // combined Host and Path
+      string protocol = token->substr (0, pos);
+      // TRACE (protocol);
+      
+      pos += 3;
+      size_t posSlash = token->find ("/", pos);
+      if (posSlash == string::npos)
+        throw ParseException ("Request line is not correctly formatted");
+
+      // TRACE (string (curPos, endline-curPos));
+      // TRACE (*token);
+      // TRACE (pos << ", " << posSlash);
+      
+      size_t posPort = token->find (":", pos);
+      if (posPort != string::npos && posPort < posSlash) // port is specified
+        {
+          string port = token->substr (posPort + 1, posSlash - posPort - 1);
+          // TRACE (port);
+          SetPort (boost::lexical_cast<unsigned short> (port));
+
+          string host = token->substr (pos, posPort-pos);
+          // TRACE (host);
+          SetHost (host);
+        }
+      else
+        {
+          SetPort (80);
+          
+          string host = token->substr (pos, posSlash-pos);
+          // TRACE (host);
+          SetHost (host);
+        }
+
+      string path = token->substr (posSlash, token->size () - posSlash);
+      // TRACE (path);
+      SetPath (path);
+    }
+
+  // 3. Request version
+  ++token;
+  if (token == tokens.end ())
+    throw ParseException ("Incorrectly formatted request");
+  // TRACE ("Token3: " << *token);
+  size_t posHTTP = token->find ("HTTP/");
+  if (posHTTP == string::npos)
+    {
+      throw ParseException ("Incorrectly formatted HTTP request");
+    }
+  string version = token->substr (5, token->size () - 5);
+  // TRACE (version);
+  SetVersion (version);
+  
+  curPos = endline + 2;
+  return ParseHeaders (curPos, size - (curPos-buffer));
 }
 
 
@@ -45,12 +148,6 @@ HttpRequest::GetTotalLength () const
   len += m_path.size () + 1; // '<path> '
   len += 5; // 'HTTP/'
   len += m_version.size (); // '1.0'
-  len += 2; // '\r\n'
-
-  len += 6; //'Host: '
-  len += m_host.size ();
-  if (m_port != 80)
-    len += 1 + boost::lexical_cast<string> (m_port).size (); // :<port>
   len += 2; // '\r\n'
 
   len += HttpHeaders::GetTotalLength ();
@@ -70,15 +167,6 @@ HttpRequest::FormatRequest (char *buffer) const
   bufLastPos = stpcpy (bufLastPos, m_path.c_str ());
   bufLastPos = stpcpy (bufLastPos, " HTTP/");
   bufLastPos = stpcpy (bufLastPos, m_version.c_str ());
-  bufLastPos = stpcpy (bufLastPos, "\r\n");
-
-  bufLastPos = stpcpy (bufLastPos, "Host: ");
-  bufLastPos = stpcpy (bufLastPos, m_host.c_str ());
-  if (m_port != 80)
-    {
-      bufLastPos = stpcpy (bufLastPos, ":");
-      bufLastPos = stpcpy (bufLastPos, boost::lexical_cast<string> (m_port).c_str ());
-    }
   bufLastPos = stpcpy (bufLastPos, "\r\n");
 
   bufLastPos = HttpHeaders::FormatHeaders (bufLastPos);
@@ -121,18 +209,32 @@ void
 HttpRequest::SetHost (const std::string &host)
 {
   m_host = host;
+
+  if (m_port != 80)
+    {
+      ModifyHeader ("Host", m_host + ":" + boost::lexical_cast<string> (m_port));
+    }
+  else
+    ModifyHeader ("Host", m_host);
 }
 
-uint16_t
+unsigned short
 HttpRequest::GetPort () const
 {
   return m_port;
 }
 
 void
-HttpRequest::SetPort (uint16_t port)
+HttpRequest::SetPort (unsigned short port)
 {
   m_port = port;
+
+  if (m_port != 80)
+    {
+      ModifyHeader ("Host", m_host + ":" + boost::lexical_cast<string> (m_port));
+    }
+  else
+    ModifyHeader ("Host", m_host);
 }
 
 const std::string &

@@ -127,14 +127,14 @@ public:
   /**
    * @brief Get port of the HTTP request
    */
-  uint16_t
+  unsigned short
   GetPort () const;
 
   /**
    * @brief Set port of the HTTP request
    */
   void
-  SetPort (uint16_t port);
+  SetPort (unsigned short port);
 
   /**
    * @brief Get path of the HTTP request
@@ -163,7 +163,7 @@ public:
 private:
   MethodEnum  m_method;
   std::string m_host;
-  uint16_t    m_port;
+  unsigned short m_port;
   std::string m_path;
   std::string m_version;
 };
