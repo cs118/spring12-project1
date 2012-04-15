@@ -8,7 +8,9 @@ def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
     env.env.append_value('CXXFLAGS', ['-O0', '-g3'])
-    env.check_boost()
+    env.options.boost_includes = '/u/cs/grad/afanasye/boost/include'
+    env.options.boost_libs     = '/u/cs/grad/afanasye/boost/lib'
+    env.check_boost(lib='thread')
 
 def build (env):
     env.load ('compiler_c compiler_cxx')
@@ -17,7 +19,7 @@ def build (env):
     server = env.program (
         target = "http-proxy",
         features = ["cxx", "cxxprogram"],
-        use = 'BOOST',
+        use = 'BOOST BOOST_THREAD',
         source = [
             # Put additional files here
             # ...
@@ -32,7 +34,7 @@ def build (env):
     client = env.program (
         target = "http-get",
         features = ["cxx", "cxxprogram"],
-        use = 'BOOST',
+        use = 'BOOST BOOST_THREAD',
         source = [
             # Put additional files here
             # ...
