@@ -7,6 +7,7 @@ def options (opt):
 def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
+    env.env.append_value('CXXFLAGS', ['-O0', '-g3'])
 
 def build (env):
     env.load ('compiler_c compiler_cxx')
@@ -18,6 +19,7 @@ def build (env):
         use = 'BOOST BOOST_REGEX',
         source = [
             "http-proxy.cc",
+            "http-headers.cc",
             "http-request.cc",
             ]
         )
@@ -28,6 +30,7 @@ def build (env):
         use = 'BOOST BOOST_REGEX',
         source = [
             "http-get.cc",
+            "http-headers.cc",
             "http-request.cc",
             ]
         )

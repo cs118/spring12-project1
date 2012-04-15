@@ -8,37 +8,7 @@
 #ifndef _HTTP_REQUEST_H_
 #define _HTTP_REQUEST_H_
 
-#include <string>
-#include <list>
-
-struct HttpHeader
-{
-  HttpHeader (const std::string &key, const std::string &value)
-    : m_key (key), m_value (value) { }
-
-  bool
-  operator == (const std::string &key) const
-  {
-    return key == m_key;
-  }
-  
-  std::string m_key;
-  std::string m_value;
-};
-
-/**
- * Exception that will be thrown when parsing cannot be performed
- */
-class ParseException : public std::exception
-{
-public:
-  ParseException (std::string reason) : m_reason (reason) { }
-  virtual ~ParseException () throw () { }
-  virtual const char* what() const throw ()
-  { return m_reason.c_str (); }
-private:
-  std::string m_reason;
-};
+#include "http-headers.h"
 
 /**
  * @brief Class to parse/create HTTP requests
@@ -67,7 +37,7 @@ private:
  *      
  *      delete [] buf;
  */
-class HttpRequest
+class HttpRequest : public HttpHeaders
 {
 public:
   enum MethodEnum
@@ -96,8 +66,8 @@ public:
    *                   " 80\r\nIf-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT\r\n\r\n";
    * req.Parse (buf);
    */
-  void
-  ParseRequest (const char *buffer);
+  const char*
+  ParseRequest (const char *buffer, size_t size);
 
   /**
    * @brief Get total length of the HTTP header (buffer size necessary to hold formatted HTTP request)
@@ -108,14 +78,12 @@ public:
   /**
    * @brief Format HTTP request
    *
-   * Note that formatted request will have \0 at the end, which should not be sent over TCP
-   *
-   * Another note. Buffer size should be enough to hold the request (e.g., obtained from GetTotalLength () call). Otherwise, anything can happen.
+   * Note that buffer size should be enough to hold the request (e.g., obtained from GetTotalLength () call). Otherwise, anything can happen.
    *
    * @param buffer [out] Buffer that will hold formatted request
    * @returns Number of bytes actually written to the buffer
    */
-  void
+  char*
   FormatRequest (char *buffer) const;
   
   // Getters/Setters for HTTP request fields
@@ -191,32 +159,6 @@ public:
    */
   void
   SetVersion (const std::string &version);
-
-  /**
-   * @brief Get associated HTTP headers
-   */
-  const std::list<HttpHeader> &
-  GetHeaders () const;
-
-  /**
-   * @brief Add HTTP header
-   */
-  void
-  AddHeader (const std::string &key, const std::string &value);
-
-  /**
-   * @brief Remove HTTP header
-   */
-  void
-  RemoveHeader (const std::string &key);
-
-  /**
-   * @brief Modify HTTP header
-   *
-   * Note that if header is currently not present, it will be added
-   */
-  void
-  ModifyHeader (const std::string &key, const std::string &value);
   
 private:
   MethodEnum  m_method;
@@ -224,8 +166,6 @@ private:
   uint16_t    m_port;
   std::string m_path;
   std::string m_version;
-  
-  std::list<HttpHeader> m_headers;
 };
 
 #endif // _HTTP_REQUEST_H_

@@ -29,8 +29,8 @@ HttpRequest::HttpRequest ()
 {
 }
   
-void
-HttpRequest::ParseRequest (const char *buffer)
+const char*
+HttpRequest::ParseRequest (const char *buffer, size_t size)
 {
 }
 
@@ -52,18 +52,13 @@ HttpRequest::GetTotalLength () const
   if (m_port != 80)
     len += 1 + boost::lexical_cast<string> (m_port).size (); // :<port>
   len += 2; // '\r\n'
+
+  len += HttpHeaders::GetTotalLength ();
   
-  for (std::list<HttpHeader>::const_iterator header = m_headers.begin ();
-       header != m_headers.end ();
-       header++)
-    {
-      len += header->m_key.size () + 2/*: */+ header->m_value.size () + 2/*\r\n*/;
-    }
-  
-  return len + 1; // for last '\0'
+  return len;
 }
 
-void
+char*
 HttpRequest::FormatRequest (char *buffer) const
 {
   if (m_method != GET)
@@ -85,16 +80,10 @@ HttpRequest::FormatRequest (char *buffer) const
       bufLastPos = stpcpy (bufLastPos, boost::lexical_cast<string> (m_port).c_str ());
     }
   bufLastPos = stpcpy (bufLastPos, "\r\n");
-  
-  for (std::list<HttpHeader>::const_iterator header = m_headers.begin ();
-       header != m_headers.end ();
-       header++)
-    {
-      bufLastPos = stpcpy (bufLastPos, header->m_key.c_str ());
-      bufLastPos = stpcpy (bufLastPos, ": ");
-      bufLastPos = stpcpy (bufLastPos, header->m_value.c_str ());
-      bufLastPos = stpcpy (bufLastPos, "\r\n");
-    }
+
+  bufLastPos = HttpHeaders::FormatHeaders (bufLastPos);
+
+  return bufLastPos;
 }
 
 
@@ -168,36 +157,4 @@ void
 HttpRequest::SetVersion (const std::string &version)
 {
   m_version = version;
-}
-
-////////////////////////////////////////////////////////////////////////
-
-const std::list<HttpHeader> &
-HttpRequest::GetHeaders () const
-{
-  return m_headers;
-}
-
-void
-HttpRequest::AddHeader (const std::string &key, const std::string &value)
-{
-  m_headers.push_back (HttpHeader (key, value));
-}
-
-void
-HttpRequest::RemoveHeader (const std::string &key)
-{
-  std::list<HttpHeader>::iterator item = std::find (m_headers.begin (), m_headers.end (), key);
-  if (item != m_headers.end ())
-    m_headers.erase (item);
-}
-
-void
-HttpRequest::ModifyHeader (const std::string &key, const std::string &value)
-{
-  std::list<HttpHeader>::iterator item = std::find (m_headers.begin (), m_headers.end (), key);
-  if (item != m_headers.end ())
-    item->m_value = value;
-  else
-    AddHeader (key, value);
 }
