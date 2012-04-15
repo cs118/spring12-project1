@@ -13,24 +13,24 @@ Due to restrictions on lnxsrv, several steps necessary to compile and run (if yo
 
 1. The following lines should be added to your ~/.profile
 
-export PATH=/usr/local/cs/bin:$PATH
-export LD_LIBRARY_PATH=/u/cs/grad/afanasye/boost/lib:/usr/local_cs/linux/lib64/:$LD_LIBRARY_PATH
+    export PATH=/usr/local/cs/bin:$PATH
+    export LD_LIBRARY_PATH=/u/cs/grad/afanasye/boost/lib:/usr/local_cs/linux/lib64/:$LD_LIBRARY_PATH
 
 2. To configure environment
 
-./waf configure
+    ./waf configure
 
 If there are any errors, please email me.
 
 3. To build/rebuild the code
 
-./waf
+    ./waf
 
 4. All compiled executables are located in build/, so you can run them as this:
 
-build/http-get
+    build/http-get
 
 or 
 
-build/http-proxy
+    build/http-proxy
 
