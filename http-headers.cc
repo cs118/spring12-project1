@@ -80,7 +80,7 @@ HttpHeaders::ParseHeaders (const char *buffer, size_t size)
     }
 
   // TRACE ("Left: " << (int)(curPos-buffer) << ", size: " << size);
-  if (curPos-buffer <= size-2)
+  if (static_cast<size_t> (curPos-buffer+2) <= size)
     {
       curPos += 2; // skip '\r\n'
     }
