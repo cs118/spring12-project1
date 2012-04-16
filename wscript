@@ -7,10 +7,10 @@ def options (opt):
 def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
-    env.env.append_value('CXXFLAGS', ['-O0', '-g3', '-Wall', '-Werror'])
     env.options.boost_includes = '/u/cs/grad/afanasye/boost/include'
     env.options.boost_libs     = '/u/cs/grad/afanasye/boost/lib'
     env.check_boost(lib='thread')
+    env.env.append_value('CXXFLAGS', ['-O0', '-g3', '-Wall', '-Werror'])
 
 def build (env):
     env.load ('compiler_c compiler_cxx')
