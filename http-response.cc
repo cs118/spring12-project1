@@ -101,6 +101,7 @@ HttpResponse::FormatResponse (char *buffer) const
   bufLastPos = stpcpy (bufLastPos, "\r\n");
 
   bufLastPos = HttpHeaders::FormatHeaders (bufLastPos);
+  bufLastPos = stpcpy (bufLastPos, "\r\n");
 
   return bufLastPos;
 }
