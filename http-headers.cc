@@ -147,3 +147,13 @@ HttpHeaders::ModifyHeader (const std::string &key, const std::string &value)
   else
     AddHeader (key, value);
 }
+
+std::string
+HttpHeaders::FindHeader (const std::string &key)
+{
+  std::list<HttpHeader>::iterator item = std::find (m_headers.begin (), m_headers.end (), key);
+  if (item != m_headers.end ())
+    return item->m_value;
+  else
+    return "";
+}

@@ -80,6 +80,14 @@ public:
    */
   void
   ModifyHeader (const std::string &key, const std::string &value);
+
+  /**
+   * @brief Find value for the `key' http header
+   *
+   * If header doesn't exist, it the method will return a blank line
+   */
+  std::string
+  FindHeader (const std::string &key);
   
 private:
   struct HttpHeader
