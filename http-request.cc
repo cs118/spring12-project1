@@ -142,6 +142,8 @@ HttpRequest::GetTotalLength () const
   len += 2; // '\r\n'
 
   len += HttpHeaders::GetTotalLength ();
+
+  len += 2; // '\r\n'
   
   return len;
 }
