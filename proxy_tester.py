@@ -15,6 +15,8 @@ import urlparse
 
 from time import sleep
 
+devnull = open('/dev/null', 'w')
+
 # Ensure booleans exist (not needed for Python 2.2.1 or higher)
 try:
     True
@@ -27,11 +29,11 @@ class ThreadPool:
     """Flexible thread pool class.  Creates a pool of threads, then
     accepts tasks that will be dispatched to the next available
     thread."""
-    
+
     def __init__(self, numThreads):
 
         """Initialize the thread pool with numThreads workers."""
-        
+
         self.__threads = []
         self.__resizeLock = threading.Condition(threading.Lock())
         self.__taskLock = threading.Condition(threading.Lock())
@@ -232,11 +234,11 @@ def main():
           port = 12345 #str(random.randint(1025, 49151))
 
      c = 0
-     while (c < tries):      
+     while (c < tries):
           c += 1
           print 'Binary: %s' % (proxy_bin);
           print 'Running on port %s' % port;
-         
+
           try:
               needPort = 1
           except IndexError:
@@ -244,13 +246,13 @@ def main():
 
           if needPort == 1:
               # Start the proxy running in the background
-              cid = os.spawnl (os.P_NOWAIT, proxy_bin, port);
+              cid = subprocess.Popen([proxy_bin, port], stdout=devnull).pid
           else:
-              cid = os.spawnl (os.P_NOWAIT, proxy_bin);
+              cid = subprocess.Popen([proxy_bin], stdout=devnull).pid
 
           # Give the proxy time to start up and start listening on the port
           time.sleep(2)
-         
+
           totalcount = 0;
           passcount = 0
           for url in pub_urls:
@@ -277,7 +279,7 @@ def main():
                       print '!!!Proxy process experienced abnormal termination during test- restarting proxy!'
                       (cid, port) = restart_proxy (proxy_bin, port, cid)
                       passed = False
-                      
+
                   if passed:
                       print 'Connect to %s, %d concurrently: [PASSED]\n' % (url, count)
                       passcount += 1
@@ -638,9 +640,9 @@ def restart_proxy(binary, oldport, oldcid):
          needPort = 0
 
      if needPort == 1:
-         cid = os.spawnl(os.P_NOWAIT, binary, newport);
+         cid = subprocess.Popen([binary, newport], stdout=devnull).pid
      else:
-         cid = os.spawnl(os.P_NOWAIT, binary);
+         cid = subprocess.Popen([binary], stdout=devnull).pid
      time.sleep(3)
      return (cid, newport)
 
