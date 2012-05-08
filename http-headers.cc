@@ -114,10 +114,10 @@ HttpHeaders::FormatHeaders (char *buffer) const
        header != m_headers.end ();
        header++)
     {
-      bufLastPos = stpcpy (bufLastPos, header->m_key.c_str ());
-      bufLastPos = stpcpy (bufLastPos, ": ");
-      bufLastPos = stpcpy (bufLastPos, header->m_value.c_str ());
-      bufLastPos = stpcpy (bufLastPos, "\r\n");
+      bufLastPos = stpncpy (bufLastPos, header->m_key.c_str (), header->m_key.size ());
+      bufLastPos = stpncpy (bufLastPos, ": ", 2);
+      bufLastPos = stpncpy (bufLastPos, header->m_value.c_str (), header->m_value.size ());
+      bufLastPos = stpncpy (bufLastPos, "\r\n", 2);
     }
   
   return bufLastPos;

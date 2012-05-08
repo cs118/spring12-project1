@@ -94,16 +94,16 @@ HttpResponse::FormatResponse (char *buffer) const
 {
   char *bufLastPos = buffer;
   
-  bufLastPos = stpcpy (bufLastPos, "HTTP/");
-  bufLastPos = stpcpy (bufLastPos, m_version.c_str ());
-  bufLastPos = stpcpy (bufLastPos, " ");
-  bufLastPos = stpcpy (bufLastPos, m_statusCode.c_str ());
-  bufLastPos = stpcpy (bufLastPos, " ");
-  bufLastPos = stpcpy (bufLastPos, m_statusMsg.c_str ());
-  bufLastPos = stpcpy (bufLastPos, "\r\n");
+  bufLastPos = stpncpy (bufLastPos, "HTTP/", 5);
+  bufLastPos = stpncpy (bufLastPos, m_version.c_str (), m_version.size ());
+  bufLastPos = stpncpy (bufLastPos, " ", 1);
+  bufLastPos = stpncpy (bufLastPos, m_statusCode.c_str (), m_statusCode.size ());
+  bufLastPos = stpncpy (bufLastPos, " ", 1);
+  bufLastPos = stpncpy (bufLastPos, m_statusMsg.c_str (), m_statusMsg.size ());
+  bufLastPos = stpncpy (bufLastPos, "\r\n", 2);
 
   bufLastPos = HttpHeaders::FormatHeaders (bufLastPos);
-  bufLastPos = stpcpy (bufLastPos, "\r\n");
+  bufLastPos = stpncpy (bufLastPos, "\r\n", 2);
 
   return bufLastPos;
 }

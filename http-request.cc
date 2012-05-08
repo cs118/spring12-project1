@@ -156,14 +156,14 @@ HttpRequest::FormatRequest (char *buffer) const
 
   char *bufLastPos = buffer;
   
-  bufLastPos = stpcpy (bufLastPos, "GET ");
-  bufLastPos = stpcpy (bufLastPos, m_path.c_str ());
-  bufLastPos = stpcpy (bufLastPos, " HTTP/");
-  bufLastPos = stpcpy (bufLastPos, m_version.c_str ());
-  bufLastPos = stpcpy (bufLastPos, "\r\n");
+  bufLastPos = stpncpy (bufLastPos, "GET ", 4);
+  bufLastPos = stpncpy (bufLastPos, m_path.c_str (), m_path.size ());
+  bufLastPos = stpncpy (bufLastPos, " HTTP/", 6);
+  bufLastPos = stpncpy (bufLastPos, m_version.c_str (), m_version.size ());
+  bufLastPos = stpncpy (bufLastPos, "\r\n", 2);
 
   bufLastPos = HttpHeaders::FormatHeaders (bufLastPos);
-  bufLastPos = stpcpy (bufLastPos, "\r\n");
+  bufLastPos = stpncpy (bufLastPos, "\r\n", 2);
 
   return bufLastPos;
 }
