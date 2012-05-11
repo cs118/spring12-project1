@@ -231,7 +231,7 @@ def main():
      try:
           port = sys.argv[2]
      except IndexError:
-          port = 12345 #str(random.randint(1025, 49151))
+          port = "12345" #str(random.randint(1025, 49151))
 
      c = 0
      while (c < tries):
