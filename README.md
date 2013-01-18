@@ -14,7 +14,7 @@ Due to restrictions on lnxsrv, several steps necessary to compile and run (if yo
 1. The following lines should be added to your ~/.profile
 
     export PATH=/usr/local/cs/bin:$PATH
-    export LD_LIBRARY_PATH=/u/cs/grad/afanasye/boost/lib:/usr/local_cs/linux/lib64/:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/u/cs/grad/yingdi/boost/lib:/usr/local/lib64/:$LD_LIBRARY_PATH
 
 2. To configure environment
 
