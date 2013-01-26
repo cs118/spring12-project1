@@ -34,18 +34,3 @@ def build (env):
             "http-response.cc",
             ]
         )
-
-    client = env.program (
-        target = "http-get",
-        features = ["cxx", "cxxprogram"],
-        use = 'BOOST BOOST_THREAD',
-        source = [
-            # Put additional files here
-            # ...
-            #
-            "http-get.cc", # main() function is here
-            "http-headers.cc",
-            "http-request.cc",
-            "http-response.cc",
-            ]
-        )
