@@ -9,8 +9,8 @@ def configure (env):
     env.load ('boost')
 
 # comment out the following two lines if compiling not on lnxsrv
-    env.options.boost_includes = '/u/cs/grad/afanasye/boost/include'
-    env.options.boost_libs     = '/u/cs/grad/afanasye/boost/lib'
+    env.options.boost_includes = '/u/cs/grad/yingdi/boost/include'
+    env.options.boost_libs     = '/u/cs/grad/yingdi/boost/lib'
 #
 
     env.check_boost(lib='thread')
