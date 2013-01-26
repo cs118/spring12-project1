@@ -11,7 +11,7 @@ How to use skeleton
 
 Due to restrictions on lnxsrv, several steps necessary to compile and run (if you're using this skeleton):
 
-1. The following lines should be added to your ~/.profile
+1. The following lines should be added to your ~/.bashrc
 
 export PATH=/usr/local/cs/bin:$PATH
 export LD_LIBRARY_PATH=/u/cs/grad/yingdi/boost/lib:/usr/local/lib64/:$LD_LIBRARY_PATH
@@ -27,10 +27,6 @@ If there are any errors, please email me.
 ./waf
 
 4. All compiled executables are located in build/, so you can run them as this:
-
-build/http-get
-
-or 
 
 build/http-proxy
 
