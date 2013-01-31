@@ -35,12 +35,12 @@ HttpResponse::ParseResponse (const char *buffer, size_t size)
   const char *endline = (const char *)memmem (curPos, size - (curPos-buffer), "\r\n", 2);
   if (endline == 0)
     {
-      throw ParseException ("HTTP Request doesn't end with \\r\\n");
+      throw ParseException ("HTTP response doesn't end with \\r\\n");
     }
 
-  string requestLine (curPos, endline-curPos);
-  size_t posFirstSpace = requestLine.find (" ");
-  size_t posSecondSpace = requestLine.find (" ", posFirstSpace+1);
+  string responseLine (curPos, endline-curPos);
+  size_t posFirstSpace = responseLine.find (" ");
+  size_t posSecondSpace = responseLine.find (" ", posFirstSpace+1);
 
   if (posFirstSpace == string::npos ||
       posSecondSpace == string::npos)
@@ -49,20 +49,20 @@ HttpResponse::ParseResponse (const char *buffer, size_t size)
     }
 
   // 1. HTTP version
-  if (requestLine.compare (0, 5, "HTTP/") != 0)
+  if (responseLine.compare (0, 5, "HTTP/") != 0)
     {
-      throw ParseException ("Incorrectly formatted HTTP request");
+      throw ParseException ("Incorrectly formatted HTTP response");
     }
-  string version = requestLine.substr (5, posFirstSpace - 5);
+  string version = responseLine.substr (5, posFirstSpace - 5);
   // TRACE (version);
   SetVersion (version);
 
   // 2. Response code
-  string code = requestLine.substr (posFirstSpace + 1, posSecondSpace - posFirstSpace - 1);
+  string code = responseLine.substr (posFirstSpace + 1, posSecondSpace - posFirstSpace - 1);
   // TRACE (code);
   SetStatusCode (code);
 
-  string msg = requestLine.substr (posSecondSpace + 1, requestLine.size () - posSecondSpace - 1);
+  string msg = responseLine.substr (posSecondSpace + 1, responseLine.size () - posSecondSpace - 1);
   // TRACE (msg);
   SetStatusMsg (msg);
 

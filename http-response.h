@@ -23,9 +23,7 @@ public:
    * @brief Default constructor 
    *
    * Example:
-   * HttpRequest req;
-   * req.SetMethod (HttpRequest::GET);
-   * req.SetHost ("www.google.com");
+   * HttpResponse resp;
    * ...
    */
   HttpResponse ();
@@ -34,41 +32,39 @@ public:
    * @brief Parse HTTP header 
    *
    * Example:
-   * HttpRequest req;
-   * const char *buf = "GET http://www.google.com:80/index.html/ HTTP/1.0\r\nContent-Length:"
-   *                   " 80\r\nIf-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT\r\n\r\n";
-   * req.Parse (buf);
+   * HttpResponse resp;
+   * resp.ParseResponse (buf, size);
    */
   const char*
   ParseResponse (const char *buffer, size_t size);
 
   /**
-   * @brief Get total length of the HTTP header (buffer size necessary to hold formatted HTTP request)
+   * @brief Get total length of the HTTP header (buffer size necessary to hold formatted HTTP response)
    */
   size_t
   GetTotalLength () const;
 
   /**
-   * @brief Format HTTP request
+   * @brief Format HTTP response
    *
-   * Note that buffer size should be enough to hold the request (e.g., obtained from GetTotalLength () call). Otherwise, anything can happen.
+   * Note that buffer size should be enough to hold the response (e.g., obtained from GetTotalLength () call). Otherwise, anything can happen.
    *
-   * @param buffer [out] Buffer that will hold formatted request
+   * @param buffer [out] Buffer that will hold formatted response
    * @returns Number of bytes actually written to the buffer
    */
   char*
   FormatResponse (char *buffer) const;
   
-  // Getters/Setters for HTTP request fields
+  // Getters/Setters for HTTP response fields
   
   /**
-   * @brief Get version of the HTTP request
+   * @brief Get version of the HTTP response
    */
   const std::string &
   GetVersion () const;
   
   /**
-   * @brief Set version of the HTTP request
+   * @brief Set version of the HTTP response
    */
   void
   SetVersion (const std::string &version);
@@ -103,4 +99,4 @@ private:
   std::string m_statusMsg;
 };
 
-#endif // _HTTP_REQUEST_H_
+#endif // _HTTP_RESPONSE_H_
