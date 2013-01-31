@@ -1,0 +1,19 @@
+How to use the http-tester
+
+1. create a file "portconf"
+
+2. put following lines in the portconf file
+
+       pport:<proxy_port>
+       sport1:<server_1_port>
+       sport2:<server_2_port>
+
+   <proxy_port> is the port number used by your proxy
+   <server_1_port> can be any port number in interval [10000,50000]
+   <server_2_port> can be any port number in interval [10000,50000], but it MUST be different from <server_1_port>
+
+3. run your proxy
+
+4. run "./http-tester.py 2>/dev/null"
+
+I may add more test cases to help you debug your code.
