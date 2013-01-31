@@ -129,6 +129,13 @@ pport  = conf.readline().rstrip().split(':')[1]
 sport1 = conf.readline().rstrip().split(':')[1]
 sport2 = conf.readline().rstrip().split(':')[1]
 
+b1 = open("./basic", "w")
+b1.write("basic\n")
+b2 = open("./basic2", "w")
+b2.write("aloha\n")
+b3 = open("./basic3", "w")
+b3.write("cat\n")
+
 
 server1 = ServerThread(int(sport1))
 server2 = ServerThread(int(sport2))
