@@ -55,7 +55,7 @@ class ClientThread (Thread):
         self.proxy = proxy
         self.url = url
         self.file = file
-        self.result = True
+        self.result = False
         self.data = ""
 
     def run(self):
@@ -69,10 +69,11 @@ class ClientThread (Thread):
             resp = conn.getresponse()
             rdata = resp.read()
 
-            if rdata != cdata:
-                self.result = False
+            if rdata == cdata:
+                self.result = True
             self.data = rdata
             conn.close()
+            dataFile.close()
         else:
             conn = HTTPConnection(self.proxy)
             conn.request("GET", self.url)
@@ -80,7 +81,7 @@ class ClientThread (Thread):
             rdata = resp.read()
             
             if resp.status == httplib.OK:
-                self.result = False
+                self.result = True
             conn.close()
 
 class ClientPersistThread(Thread):
@@ -91,10 +92,11 @@ class ClientPersistThread(Thread):
         self.file = file
         self.url2 = url2
         self.file2 = file2
-        self.result = True
+        self.result = False
 
     def run(self):
         conn = HTTPConnection(self.proxy)
+        tmpFlag = True
 
         dataFile = open(self.file, "r")
         cdata = dataFile.read()
@@ -105,10 +107,10 @@ class ClientPersistThread(Thread):
         resp = conn.getresponse()
         rdata = resp.read()
         if rdata != cdata:
-            self.result = False
+            tmpFlag = False
             
         if resp.will_close == True:
-            self.result = False
+            tmpFlag = False
 
         connHdrs = {"Connection": "close"}
         conn.request("GET", self.url2, headers=connHdrs)
@@ -116,12 +118,15 @@ class ClientPersistThread(Thread):
         resp = conn.getresponse()
         rdata2 = resp.read()
         if rdata2 != cdata2:
-            self.result = False
+            tmpFlag = False
 
         if resp.will_close == False:
-            self.result = False
+            tmpFlag = False
 
+        if tmpFlag == True:
+            self.result = True
         conn.close()
+        dataFile.close()
 
 
 conf = open("./portconf", "r")
@@ -136,6 +141,9 @@ b2.write("aloha\n")
 b3 = open("./basic3", "w")
 b3.write("cat\n")
 
+b1.close()
+b2.close()
+b3.close()
 
 server1 = ServerThread(int(sport1))
 server2 = ServerThread(int(sport2))
@@ -171,24 +179,26 @@ client3.join()
 client4.join()
 end = time.time()
 
-r = True
+r = False
 datafile = open("./basic3", "r")
 cdata = datafile.read()
-if(end - start) > 4:
-    r = False
-if client3.data != cdata or client4.data != cdata:
-    r = False
+if(end - start) < 4 and client3.data == cdata and client4.data == cdata:
+    r = True
 if r:
     print "Concurrent Connection: [" + bcolors.PASS + "PASSED" + bcolors.ENDC + "]"
 else:
     print "Concurrent Connection: [" + bcolors.FAIL + "FAILED" + bcolors.ENDC + "]"
 
 client5 = ClientThread("127.0.0.1:" + pport, "http://127.0.0.1:"+sport1+"/cacheTest", "./basic")
+client5.start()
+client5.join()
 time.sleep(2)
 client6 = ClientThread("127.0.0.1:" + pport, "http://127.0.0.1:"+sport1+"/cacheTest", "./basic")
-r = True
-if client5.data != client6.data:
-    r = False
+client6.start()
+client6.join()
+r = False
+if client5.data == client6.data and client5.data != "":
+    r = True
 if r:
     print "Caching: [" + bcolors.PASS + "PASSED" + bcolors.ENDC + "]"
 else:
