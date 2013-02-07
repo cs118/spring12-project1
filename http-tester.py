@@ -25,8 +25,8 @@ class TestHandler(BaseHTTPRequestHandler):
         expireDate=(datetime.now()+timedelta(days=1)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         lastModify=(datetime.now()+timedelta(days=-1)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         self.send_response(200)
-        self.send_header('Content-type','text/html')
-        self.send_header('Content-length', str(size))
+        self.send_header('Content-Type','text/html')
+        self.send_header('Content-Length', str(size))
         self.send_header('Expires',expireDate)
         self.send_header('Last-Modified', lastModify)
         if self.close_connection == True:
