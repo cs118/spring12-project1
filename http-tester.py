@@ -16,7 +16,7 @@ class TestHandler(BaseHTTPRequestHandler):
         if self.path == "/basic2":
             cdata = open("./basic2", "r").read()
         if self.path == "/basic3":
-            cdata = open("./basic", "r").read()
+            cdata = open("./basic3", "r").read()
             time.sleep(3)
         if self.path == "/cacheTest":
             cdata = str(time.time())
