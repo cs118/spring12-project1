@@ -27,7 +27,7 @@ class TestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.send_header('Content-length', str(size))
-        self.send_header('Expire',expireDate)
+        self.send_header('Expires',expireDate)
         self.send_header('Last-Modified', lastModify)
         if self.close_connection == True:
             self.send_header('Connection', 'close')
