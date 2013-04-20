@@ -8,8 +8,8 @@ def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
 
-    env.check(function_name='memmem', header_name='string.h')
-    env.check(funciton_name='strncpy', header_name='string.h')
+    env.check(function_name='memmem', header_name='string.h', mandatory=False)
+    env.check(funciton_name='strncpy', header_name='string.h', mandatory=False)
 
 # comment out the following two lines if compiling not on lnxsrv
 #    env.options.boost_includes = '/u/cs/grad/yingdi/boost/include'
