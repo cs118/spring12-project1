@@ -10,6 +10,8 @@
 #include <string> // C++ STL string
 #include <string.h> // helpers to copy C-style strings
 
+#include "compat.h"
+
 using namespace std;
 
 // comment the following line to disable debug output

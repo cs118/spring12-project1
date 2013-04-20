@@ -8,12 +8,15 @@ def configure (env):
     env.load ('compiler_c compiler_cxx')
     env.load ('boost')
 
+    env.check(function_name='memmem', header_name='string.h')
+    env.check(funciton_name='strncpy', header_name='string.h')
+
 # comment out the following two lines if compiling not on lnxsrv
-    env.options.boost_includes = '/u/cs/grad/yingdi/boost/include'
-    env.options.boost_libs     = '/u/cs/grad/yingdi/boost/lib'
+#    env.options.boost_includes = '/u/cs/grad/yingdi/boost/include'
+#    env.options.boost_libs     = '/u/cs/grad/yingdi/boost/lib'
 #
 
-    env.check_boost(lib='thread')
+    env.check_boost(lib='system thread')
     env.env.append_value('CXXFLAGS', ['-O0', '-g3', '-Wall', '-Werror'])
 
 def build (env):
@@ -23,11 +26,12 @@ def build (env):
     server = env.program (
         target = "http-proxy",
         features = ["cxx", "cxxprogram"],
-        use = 'BOOST BOOST_THREAD',
+        use = 'BOOST BOOST_SYSTEM BOOST_THREAD',
         source = [
             # Put additional files here
             # ...
             #
+            "compat.cc", # OSX 10.6 compatibility
             "http-proxy.cc", # main() function is here
             "http-headers.cc",
             "http-request.cc",
