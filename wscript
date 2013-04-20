@@ -17,7 +17,7 @@ def configure (env):
 #
 
     env.check_boost(lib='system thread')
-    env.env.append_value('CXXFLAGS', ['-O0', '-g3', '-Wall', '-Werror'])
+    env.env.append_value('CXXFLAGS', ['-O0', '-g3', '-Wall', '-Wno-unused-local-typedefs', '-Werror'])
 
 def build (env):
     env.load ('compiler_c compiler_cxx')
