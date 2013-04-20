@@ -37,19 +37,16 @@ memmem (const void *haystack, size_t haystack_len, const void *needle,
 }
 #endif
 
-#ifndef HAVE_STRNCPY
+#ifndef HAVE_STPNCPY
+#include <string.h>
+#include <stddef.h>
+
 char *
-strncpy(char *s1, const char *s2, size_t n)
+stpncpy (char *dst, const char *src, size_t len)
 {
-    char *s = s1;
-    while (n > 0 && *s2 != '\0') {
-	*s++ = *s2++;
-	--n;
-    }
-    while (n > 0) {
-	*s++ = '\0';
-	--n;
-    }
-    return s1;
+  size_t n = strlen (src);
+  if (n > len)
+    n = len;
+  return strncpy (dst, src, len) + n;
 }
 #endif

@@ -10,9 +10,9 @@ memmem (const void *haystack, size_t haystack_len, const void *needle,
 	size_t needle_len);
 #endif
 
-#ifndef HAVE_STRNCPY
+#ifndef HAVE_STPNCPY
 char *
-strncpy(char *s1, const char *s2, size_t n);
+strpncpy(char *s1, const char *s2, size_t n);
 #endif
 
 #endif
